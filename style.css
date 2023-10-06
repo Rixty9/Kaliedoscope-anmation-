@@ -1,0 +1,60 @@
+$segmentCount: 8;
+$step: 360 / $segmentCount;
+$bgColour: rgb(51, 82, 102);
+$imageUrl: 'https://assets.codepen.io/1366040/kaleidoscope-flower.svg';
+
+html, body {
+	height: 100vh;
+	overflow: hidden;
+}
+
+// Make the animation take the whole available space
+.kaleidoscope {
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+	background: $bgColour;
+
+	// Place all segments in the bottom left quadrant of the screen
+	&__segment {
+		position: absolute;
+		left: 0;
+		top: 50%;
+		height: 100vmax;
+		width: 50%;
+		z-index: 0;
+		overflow: hidden;
+		// Use the top right corner as the attachment point for when we're doing our rotations
+		transform-origin: 100% 0;
+		
+		// Rotate each segment by an appropriate number of degrees so that they cover the whole space. 
+		// Every one of them will have their initial top right corner in the middle of the screen
+		@for $i from 1 through $segmentCount {
+			&:nth-child(#{$i}) {
+				transform: rotate(#{$step * $i}deg);
+			}
+		}
+	}
+
+	// Image is actually a div / wrapper inside the kaleidoscope__section element
+	// We apply a background image to it and rotate it so that only a portion of it is visible
+	&__image {
+		position: relative;
+		top: 0;
+		left: 100%;
+		height: 100%;
+		width: 100%;
+		background-image: url($imageUrl);
+		background-position: center;
+		transform-origin: 0 0;
+		// scaleX(-1) will flip the image horizontally so we get the mirror-like reflection in each pair of sections
+		transform: scaleX(-1) rotate(0deg);
+		transition: background-position 1s;
+
+		.kaleidoscope__segment:nth-child(2n) & {
+			// Reverse the flip on images in every other section
+			transform: rotate(#{360 / $segmentCount}deg);
+		}
+	}
+	
+}
